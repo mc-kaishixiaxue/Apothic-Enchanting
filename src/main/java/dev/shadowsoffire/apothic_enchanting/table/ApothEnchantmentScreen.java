@@ -44,6 +44,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantable;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.neoforged.fml.ModList;
 
 public class ApothEnchantmentScreen extends EnchantmentScreen implements DrawsOnLeft {
 
@@ -258,7 +259,13 @@ public class ApothEnchantmentScreen extends EnchantmentScreen implements DrawsOn
                 list.add(TooltipUtil.lang("gui", "enchant.eterna.desc3", f(this.menu.stats.tableEterna()), 100).withStyle(ChatFormatting.GRAY));
                 float playerMax = (float) Minecraft.getInstance().player.getAttributeValue(Ench.Attributes.MAX_ETERNA);
                 if (playerMax < 100) {
-                    list.add(TooltipUtil.lang("gui", "enchant.eterna.desc4", f(playerMax)).withStyle(ChatFormatting.RED));
+                    String key = "enchant.eterna.limited";
+                    if (ModList.get().isLoaded("apotheosis")) {
+                        // Presume that if Apoth is in here, the tier augments are active, and they are controlling the attribute.
+                        // Pack authors can just mess with the lang keys if they change behavior.
+                        key += ".world_tier";
+                    }
+                    list.add(TooltipUtil.lang("gui", key, f(playerMax)).withStyle(ChatFormatting.RED));
                 }
             }
             gfx.setComponentTooltipForNextFrame(this.font, list, mouseX, mouseY);
@@ -288,9 +295,7 @@ public class ApothEnchantmentScreen extends EnchantmentScreen implements DrawsOn
             list.add(TooltipUtil.lang("gui", "enchant.arcana.desc3").withStyle(ChatFormatting.GRAY));
             if (this.menu.stats.arcana() > 0) {
                 list.add(Component.literal(""));
-                float ench = this.menu.getSlot(0).getItem().getOrDefault(DataComponents.ENCHANTABLE, new Enchantable(1)).value() / 2F;
-                list.add(TooltipUtil.lang("gui", "enchant.arcana.desc4", f(this.menu.stats.arcana() - ench)).withStyle(ChatFormatting.GRAY));
-                list.add(TooltipUtil.lang("info", "ench_bonus", f(ench)).withStyle(ChatFormatting.YELLOW));
+                list.add(TooltipUtil.lang("gui", "enchant.arcana.desc4", f(this.menu.stats.arcana())).withStyle(ChatFormatting.GRAY));
                 list.add(TooltipUtil.lang("gui", "enchant.arcana.desc5", f(this.menu.stats.arcana())).withStyle(ChatFormatting.GOLD));
             }
             gfx.setComponentTooltipForNextFrame(this.font, list, mouseX, mouseY);
